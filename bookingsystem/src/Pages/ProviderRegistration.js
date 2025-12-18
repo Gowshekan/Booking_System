@@ -65,70 +65,65 @@ const ProviderRegistration = () => {
     setLoading(true);
 
     try {
-      // Save provider to users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      // Register provider via API
+      const signupResult = await fetch('http://localhost:5000/api/v1/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: 'provider',
+          phone: formData.phone,
+          address: formData.address
+        })
+      });
       
-      if (users.find(u => u.email === formData.email)) {
-        toast.error('Email already exists');
+      const signupData = await signupResult.json();
+      
+      if (signupData.status !== 'success') {
+        toast.error(signupData.message || 'Registration failed');
         setLoading(false);
         return;
       }
       
-      const newProvider = {
-        id: Date.now().toString(),
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: 'provider',
-        phone: formData.phone,
-        address: formData.address,
-        businessName: formData.businessName,
-        businessDescription: formData.businessDescription,
-        serviceCategories: formData.serviceCategories,
-        experience: formData.experience,
-        certifications: formData.certifications,
-        workingHours: formData.workingHours,
-        serviceArea: formData.serviceArea,
-        priceRange: formData.priceRange,
-        createdAt: new Date().toISOString()
-      };
-      
-      users.push(newProvider);
-      localStorage.setItem('users', JSON.stringify(users));
+      // Save user data
+      localStorage.setItem('user', JSON.stringify(signupData.user));
+      localStorage.setItem('token', signupData.token);
       
       // Create services for each category
-      const services = JSON.parse(localStorage.getItem('services') || '[]');
-      const basePrice = formData.priceRange.includes('25-50') ? 35 : 
-                       formData.priceRange.includes('50-75') ? 60 :
-                       formData.priceRange.includes('75-100') ? 85 :
-                       formData.priceRange.includes('100-150') ? 125 : 75;
+      const basePrice = formData.priceRange.includes('500-1000') ? 750 : 
+                       formData.priceRange.includes('1000-1500') ? 1250 :
+                       formData.priceRange.includes('1500-2000') ? 1750 :
+                       formData.priceRange.includes('2000-3000') ? 2500 : 1000;
       
-      formData.serviceCategories.forEach(category => {
-        const newService = {
-          id: `${Date.now()}-${category}`,
+      for (const category of formData.serviceCategories) {
+        const serviceData = {
           title: `Professional ${category} Service`,
           description: formData.businessDescription || `Expert ${category.toLowerCase()} services by ${formData.name}`,
           category: category,
           price: basePrice,
           duration: 90,
-          rating: 5.0,
-          reviewCount: 0,
-          providerId: newProvider.id,
-          providerName: formData.name,
-          providerPhone: formData.phone,
-          serviceArea: formData.serviceArea,
-          workingHours: formData.workingHours,
-          createdAt: new Date().toISOString()
+          provider: signupData.user.id,
+          serviceArea: formData.serviceArea
         };
-        services.push(newService);
-      });
-      
-      localStorage.setItem('services', JSON.stringify(services));
+        
+        await fetch('http://localhost:5000/api/v1/services', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(serviceData)
+        });
+      }
       
       toast.success('Registration successful! You are now a verified provider and your services are live!');
       navigate('/services');
     } catch (error) {
-      toast.error('Registration failed');
+      console.error('Registration error:', error);
+      toast.error('Registration failed. Please ensure backend is running and try again.');
     } finally {
       setLoading(false);
     }
@@ -306,11 +301,11 @@ const ProviderRegistration = () => {
                       required
                     >
                       <option value="">Select typical price range</option>
-                      <option value="$25-50">$25-50 per hour</option>
-                      <option value="$50-75">$50-75 per hour</option>
-                      <option value="$75-100">$75-100 per hour</option>
-                      <option value="$100-150">$100-150 per hour</option>
-                      <option value="$150+">$150+ per hour</option>
+                      <option value="₹500-1000">₹500-1000 per hour</option>
+                      <option value="₹1000-1500">₹1000-1500 per hour</option>
+                      <option value="₹1500-2000">₹1500-2000 per hour</option>
+                      <option value="₹2000-3000">₹2000-3000 per hour</option>
+                      <option value="₹3000+">₹3000+ per hour</option>
                       <option value="project-based">Project-based pricing</option>
                     </select>
                   </div>

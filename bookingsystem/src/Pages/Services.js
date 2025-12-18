@@ -22,10 +22,10 @@ const Services = () => {
 
   const categories = ['Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Cleaning', 'Repair'];
   const priceRanges = [
-    { label: 'Under $50', value: '0-50' },
-    { label: '$50 - $100', value: '50-100' },
-    { label: '$100 - $200', value: '100-200' },
-    { label: 'Over $200', value: '200+' }
+    { label: 'Under ₹500', value: '0-500' },
+    { label: '₹500 - ₹1000', value: '500-1000' },
+    { label: '₹1000 - ₹2000', value: '1000-2000' },
+    { label: 'Over ₹2000', value: '2000+' }
   ];
 
   useEffect(() => {
@@ -37,48 +37,62 @@ const Services = () => {
   }, [id, filters]);
 
   const fetchService = async () => {
-    const allServices = JSON.parse(localStorage.getItem('services') || '[]');
-    const foundService = allServices.find(s => s.id === id);
-    
-    if (foundService) {
-      // Format service for display
-      const formattedService = {
-        ...foundService,
-        _id: foundService.id,
-        provider: {
-          name: foundService.providerName,
-          _id: foundService.providerId,
-          phone: foundService.providerPhone,
-          bio: `Professional service provider in ${foundService.serviceArea}`,
-          location: foundService.serviceArea,
-          rating: 4.8,
-          completedJobs: Math.floor(Math.random() * 100) + 50
-        },
-        features: [
-          'Professional service',
-          'Quality guarantee', 
-          'Insured work',
-          'Clean-up included',
-          'Licensed professional',
-          'Customer satisfaction guaranteed'
-        ]
-      };
-      setService(formattedService);
-    } else {
+    try {
+      const result = await fetch(`http://localhost:5000/api/v1/services/${id}`);
+      const data = await result.json();
+      
+      if (data.status === 'success') {
+        const foundService = data.service;
+        
+        if (foundService) {
+          const formattedService = {
+            ...foundService,
+            _id: foundService._id || foundService.id,
+            provider: foundService.provider || {
+              name: 'Provider',
+              _id: foundService.providerId
+            },
+            features: [
+              'Professional service',
+              'Quality guarantee', 
+              'Insured work',
+              'Clean-up included'
+            ]
+          };
+          setService(formattedService);
+        } else {
+          setService(null);
+        }
+      } else {
+        setService(null);
+      }
+    } catch (error) {
+      console.log('API not available');
       setService(null);
     }
     setLoading(false);
   };
 
   const fetchServices = async () => {
-    const allServices = JSON.parse(localStorage.getItem('services') || '[]');
-    let filteredServices = allServices;
-    
-    if (filters.category) {
-      filteredServices = filteredServices.filter(s => s.category === filters.category);
+    try {
+      const result = await fetch('http://localhost:5000/api/v1/services');
+      const data = await result.json();
+      
+      if (data.status === 'success') {
+        let filteredServices = data.services;
+        
+        if (filters.category) {
+          filteredServices = filteredServices.filter(s => s.category === filters.category);
+        }
+        
+        setServices(filteredServices);
+      } else {
+        setServices([]);
+      }
+    } catch (error) {
+      console.log('API error:', error);
+      setServices([]);
     }
-    
-    setServices(filteredServices);
     setLoading(false);
   };
 
@@ -168,7 +182,7 @@ const Services = () => {
               <div className="service-pricing">
                 <div className="price">
                   <span className="price-label">Starting at</span>
-                  <span className="price-amount">${service.price}</span>
+                  <span className="price-amount">₹{service.price}</span>
                 </div>
                 
                 <button 
@@ -206,7 +220,6 @@ const Services = () => {
       <div className="container">
         <div className="services-header">
           <h1>{category ? `${category} Services` : 'All Services'}</h1>
-          <p>Connect with backend to view available services</p>
         </div>
 
         <div className="services-content">
@@ -265,16 +278,43 @@ const Services = () => {
           </div>
 
           <div className="services-main">
-            <div className="no-services">
-              <h3>No services available</h3>
-              <p>Connect to backend API to load services</p>
-              <button 
-                className="btn-primary"
-                onClick={() => navigate('/')}
-              >
-                Go to Home
-              </button>
-            </div>
+            {services.length > 0 ? (
+              <div className="services-grid">
+                {services.map((service) => (
+                  <div key={service._id || service.id} className="service-card">
+                    <div className="service-content">
+                      <h3>{service.title}</h3>
+                      <p>{service.description}</p>
+                      <div className="service-meta">
+                        <span className="price">₹{service.price}</span>
+                        <span className="rating">⭐ {service.rating || 4.5}</span>
+                        <span className="duration">{service.duration} min</span>
+                      </div>
+                      <div className="service-provider">
+                        <strong>Provider:</strong> {service.provider?.name || service.providerName || 'Provider'}
+                      </div>
+                      <button 
+                        className="btn-primary"
+                        onClick={() => navigate(`/services/${service._id || service.id}`)}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-services">
+                <h3>No services available</h3>
+                <p>Register as a provider to add services</p>
+                <button 
+                  className="btn-primary"
+                  onClick={() => navigate('/provider-registration')}
+                >
+                  Become a Provider
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

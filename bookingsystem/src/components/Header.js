@@ -16,14 +16,24 @@ const Header = () => {
         <header className="header">
             <div className="header-container">
                 <div className="logo">
-                    <img src="/BookingSystem.png" alt="logo" style={{height: '40px'}} />
+                    <img src="/BookingSystem.png" alt="logo" style={{height: '100px'}} />
                 </div>
                 <nav className="nav-links">
                     <NavLink to="/home">Home</NavLink>
                     <NavLink to="/services">Services</NavLink>
                     <NavLink to="/about">About</NavLink>
-                    <NavLink to="/customer-dashboard">My Bookings</NavLink>
-                    <NavLink to="/provider-registration">Become Provider</NavLink>
+                    {user?.role === 'customer' && (
+                        <NavLink to="/customer-dashboard">My Bookings</NavLink>
+                    )}
+                    {user?.role === 'provider' && (
+                        <>
+                            <NavLink to="/add-service">Add Service</NavLink>
+                            <NavLink to="/provider-dashboard">My Bookings</NavLink>
+                        </>
+                    )}
+                    {!user && (
+                        <NavLink to="/provider-registration">Become Provider</NavLink>
+                    )}
                     {user ? (
                         <button onClick={handleLogout} className="btn-primary">Logout</button>
                     ) : (

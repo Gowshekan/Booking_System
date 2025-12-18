@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { api } from '../utils/api';
 import '../Styles/Auth.css';
 
 const Auth = () => {
@@ -24,16 +25,18 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const user = users.find(u => u.email === formData.email && u.password === formData.password);
+        const result = await api.login({
+          email: formData.email,
+          password: formData.password
+        });
         
-        if (user) {
-          const { password, ...userWithoutPassword } = user;
-          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+        if (result.status === 'success') {
+          localStorage.setItem('user', JSON.stringify(result.user));
+          localStorage.setItem('token', result.token);
           toast.success('Login successful!');
           navigate('/');
         } else {
-          toast.error('Invalid email or password');
+          toast.error(result.message || 'Login failed');
         }
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -42,36 +45,27 @@ const Auth = () => {
           return;
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        
-        if (users.find(u => u.email === formData.email)) {
-          toast.error('Email already exists');
-          setLoading(false);
-          return;
-        }
-        
-        const newUser = {
-          id: Date.now().toString(),
+        const result = await api.signup({
           name: formData.name,
           email: formData.email,
           password: formData.password,
           role: formData.role,
           phone: formData.phone,
-          address: formData.address,
-          createdAt: new Date().toISOString()
-        };
+          address: formData.address
+        });
         
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        const { password, ...userWithoutPassword } = newUser;
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-        
-        toast.success('Registration successful!');
-        navigate('/');
+        if (result.status === 'success') {
+          localStorage.setItem('user', JSON.stringify(result.user));
+          localStorage.setItem('token', result.token);
+          toast.success('Registration successful!');
+          navigate('/');
+        } else {
+          toast.error(result.message || 'Registration failed');
+        }
       }
     } catch (error) {
-      toast.error('An error occurred. Please try again.');
+      console.error('Auth error:', error);
+      toast.error(error.message || 'Connection failed. Make sure backend is running.');
     } finally {
       setLoading(false);
     }

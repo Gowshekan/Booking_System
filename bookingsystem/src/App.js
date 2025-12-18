@@ -16,6 +16,9 @@ import Services from './Pages/Services';
 import Booking from './Pages/Booking';
 import MyBooking from './Pages/MyBooking';
 import ProviderRegistration from './Pages/ProviderRegistration';
+import ProviderDashboard from './Pages/ProviderDashboard';
+import AddService from './Pages/AddService';
+import ConnectionTest from './Pages/ConnectionTest';
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
               <Route path="/booking/:id" element={<Booking />} />
               <Route path="/customer-dashboard" element={<MyBooking />} />
               <Route path="/provider-registration" element={<ProviderRegistration />} />
+              <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+              <Route path="/add-service" element={<AddService />} />
+              <Route path="/test-connection" element={<ConnectionTest />} />
               <Route path="*" element={<div><h1>404 - Page Not Found</h1></div>} />
             </Routes>
           </main>

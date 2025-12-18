@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
 import '../Styles/Home.css';
 
 const Home = () => {
@@ -22,7 +22,19 @@ const Home = () => {
   }, []);
 
   const fetchFeaturedServices = async () => {
-    setServices([]);
+    try {
+      const result = await fetch('http://localhost:5000/api/v1/services');
+      const data = await result.json();
+      
+      if (data.status === 'success') {
+        setServices(data.services.slice(0, 6)); // Show first 6 services
+      } else {
+        setServices([]);
+      }
+    } catch (error) {
+      console.log('API not available');
+      setServices([]);
+    }
     setLoading(false);
   };
 
@@ -76,14 +88,14 @@ const Home = () => {
             <div className="loading">Loading services...</div>
           ) : (
             <div className="services-grid">
-              {services.map((service) => (
+              {services.length > 0 ? services.map((service) => (
                 <div key={service._id} className="service-card">
                   <img src="/api/placeholder/300/200" alt={service.title} />
                   <div className="service-info">
                     <h3>{service.title}</h3>
                     <p>{service.description}</p>
                     <div className="service-meta">
-                      <span className="price">${service.price}</span>
+                      <span className="price">₹{service.price}</span>
                       <span className="rating">⭐ {service.rating || 4.5}</span>
                       <span className="duration">{service.duration} min</span>
                     </div>
@@ -95,7 +107,11 @@ const Home = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div style={{textAlign: 'center', padding: '2rem', gridColumn: '1 / -1'}}>
+                  <p>No services available. Start backend to load services.</p>
+                </div>
+              )}
             </div>
           )}
         </div>

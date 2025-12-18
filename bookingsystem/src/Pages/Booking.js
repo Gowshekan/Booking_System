@@ -25,21 +25,38 @@ const Booking = () => {
         
         const fetchService = async () => {
             try {
-                // For now, set null - ready for backend integration
-                setService(null);
+                console.log('Fetching service with ID:', bookingId);
+                const result = await fetch(`http://localhost:5000/api/v1/services/${bookingId}`);
+                const data = await result.json();
+                
+                console.log('Service fetch result:', data);
+                
+                if (data.status === 'success') {
+                    setService(data.service);
+                } else {
+                    console.log('Service not found in API response');
+                    setService(null);
+                }
             } catch (error) {
-                toast.error('Service not found');
-                navigate('/services');
+                console.log('API error:', error);
+                setService(null);
             }
         };
 
         const fetchBooking = async () => {
             try {
-                // For now, set null - ready for backend integration
-                setBooking(null);
+                console.log('Fetching booking with ID:', bookingId);
+                const result = await fetch(`http://localhost:5000/api/v1/bookings/${bookingId}`);
+                const data = await result.json();
+                
+                if (data.status === 'success') {
+                    setBooking(data.booking);
+                } else {
+                    setBooking(null);
+                }
             } catch (error) {
-                toast.error('Booking not found');
-                navigate('/customer-dashboard');
+                console.log('Booking fetch error:', error);
+                setBooking(null);
             }
         };
         
@@ -53,11 +70,41 @@ const Booking = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // For now, just show success - ready for backend integration
-            toast.success('Booking created successfully!');
-            navigate('/customer-dashboard');
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            
+            const bookingData = {
+                service: bookingId,
+                customer: user.id,
+                provider: service.provider?._id || service.provider,
+                date: formData.date,
+                time: formData.time,
+                address: formData.address,
+                notes: formData.notes,
+                totalAmount: service.price
+            };
+            
+            console.log('Submitting booking:', bookingData);
+            
+            const result = await fetch('http://localhost:5000/api/v1/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookingData)
+            });
+            
+            const data = await result.json();
+            console.log('Booking result:', data);
+            
+            if (data.status === 'success') {
+                toast.success('Booking created successfully!');
+                navigate('/customer-dashboard');
+            } else {
+                toast.error(data.message || 'Booking failed');
+            }
         } catch (error) {
-            toast.error('Booking failed');
+            console.error('Booking error:', error);
+            toast.error('Booking failed - please check connection');
         }
     };
 
@@ -71,7 +118,7 @@ const Booking = () => {
                 <h1>Book Service: {service.title}</h1>
                 <div className="service-summary">
                     <p><strong>Provider:</strong> {service.provider?.name}</p>
-                    <p><strong>Price:</strong> ${service.price}</p>
+                    <p><strong>Price:</strong> ₹{service.price}</p>
                     <p><strong>Duration:</strong> {service.duration} minutes</p>
                 </div>
                 
@@ -140,7 +187,7 @@ const Booking = () => {
                     <p><strong>Date:</strong> {new Date(booking.date).toLocaleDateString()}</p>
                     <p><strong>Time:</strong> {booking.time}</p>
                     <p><strong>Status:</strong> {booking.status}</p>
-                    <p><strong>Total Amount:</strong> ${booking.totalAmount}</p>
+                    <p><strong>Total Amount:</strong> ₹{booking.totalAmount}</p>
                     <p><strong>Address:</strong> {booking.address}</p>
                     {booking.notes && <p><strong>Notes:</strong> {booking.notes}</p>}
                 </div>

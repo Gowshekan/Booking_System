@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import '../Styles/MyBooking.css';
 
-const MyBooking = () => {
+const ProviderDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -14,18 +13,24 @@ const MyBooking = () => {
       navigate('/auth');
       return;
     }
-    fetchBookings();
+    
+    if (user.role !== 'provider') {
+      navigate('/');
+      return;
+    }
+    
+    fetchProviderBookings();
   }, [navigate]);
 
-  const fetchBookings = async () => {
+  const fetchProviderBookings = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       if (user && user.id) {
-        console.log('Fetching bookings for user:', user.id);
-        const result = await fetch(`http://localhost:5000/api/v1/bookings/user/${user.id}`);
+        console.log('Fetching provider bookings for user:', user.id);
+        const result = await fetch(`http://localhost:5000/api/v1/bookings/provider/${user.id}`);
         const data = await result.json();
         
-        console.log('Bookings fetch result:', data);
+        console.log('Provider bookings fetch result:', data);
         
         if (data.status === 'success') {
           setBookings(data.bookings || []);
@@ -36,7 +41,7 @@ const MyBooking = () => {
         setBookings([]);
       }
     } catch (error) {
-      console.log('Bookings API error:', error);
+      console.log('Provider bookings API error:', error);
       setBookings([]);
     } finally {
       setLoading(false);
@@ -64,18 +69,21 @@ const MyBooking = () => {
     <div className="dashboard">
       <div className="container">
         <div className="dashboard-header">
-          <h1>My Bookings</h1>
+          <h1>Provider Dashboard</h1>
           <p>Welcome back, {user?.name}!</p>
         </div>
         
         <div className="dashboard-actions">
-          <button className="btn-primary" onClick={() => navigate('/services')}>
-            Browse Services
+          <button className="btn-primary" onClick={() => navigate('/add-service')} style={{marginRight: '1rem'}}>
+            Add New Service
+          </button>
+          <button className="btn-outline" onClick={() => navigate('/services')}>
+            View All Services
           </button>
         </div>
 
         <div className="dashboard-section">
-          <h2>My Bookings</h2>
+          <h2>Service Bookings</h2>
           {loading ? (
             <div className="empty-state">
               <h3>Loading bookings...</h3>
@@ -84,9 +92,9 @@ const MyBooking = () => {
           ) : bookings.length === 0 ? (
             <div className="empty-state">
               <h3>No bookings found</h3>
-              <p>Start by booking your first service</p>
+              <p>Customers haven't booked your services yet</p>
               <button className="btn-primary" onClick={() => navigate('/services')}>
-                Book a Service
+                View Services
               </button>
             </div>
           ) : (
@@ -94,19 +102,19 @@ const MyBooking = () => {
               {bookings.map((booking) => (
                 <div key={booking._id} className="booking-card">
                   <h3>{booking.service?.title}</h3>
-                  <p><strong>Provider:</strong> {booking.provider?.name}</p>
+                  <p><strong>Customer:</strong> {booking.customer?.name}</p>
+                  <p><strong>Phone:</strong> {booking.customer?.phone}</p>
                   <p><strong>Date:</strong> {new Date(booking.date).toLocaleDateString()}</p>
                   <p><strong>Time:</strong> {booking.time}</p>
-                  <p><strong>Amount:</strong> ₹{booking.totalAmount}</p>
+                  <p><strong>Address:</strong> {booking.address}</p>
+                  <p><strong>Amount:</strong> ${booking.totalAmount}</p>
+                  {booking.notes && <p><strong>Notes:</strong> {booking.notes}</p>}
                   <p>
                     <strong>Status:</strong> 
                     <span style={{ color: getStatusColor(booking.status), marginLeft: '0.5rem' }}>
                       {booking.status.toUpperCase()}
                     </span>
                   </p>
-                  <button className="btn-outline" onClick={() => navigate(`/booking/${booking._id || booking.id}`)}>
-                    View Details
-                  </button>
                 </div>
               ))}
             </div>
@@ -117,4 +125,4 @@ const MyBooking = () => {
   );
 };
 
-export default MyBooking;
+export default ProviderDashboard;
