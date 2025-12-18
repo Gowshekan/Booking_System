@@ -4,7 +4,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 dotenv.config({path: "./config.env"});
-app.use(cors());
+app.use(cors({
+    origin: ["https://booking-system.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 
 // Disable mongoose buffering
 mongoose.set('bufferCommands', false);

@@ -52,7 +52,7 @@ const AddService = () => {
         serviceArea: formData.serviceArea
       };
 
-      const result = await fetch('http://localhost:5000/api/v1/services', {
+      const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/services`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

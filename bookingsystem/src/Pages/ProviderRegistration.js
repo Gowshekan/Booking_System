@@ -66,7 +66,7 @@ const ProviderRegistration = () => {
 
     try {
       // Register provider via API
-      const signupResult = await fetch('http://localhost:5000/api/v1/auth/signup', {
+      const signupResult = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const ProviderRegistration = () => {
           serviceArea: formData.serviceArea
         };
         
-        await fetch('http://localhost:5000/api/v1/services', {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL}/services`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

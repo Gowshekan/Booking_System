@@ -22,7 +22,7 @@ const MyBooking = () => {
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       if (user && user.id) {
         console.log('Fetching bookings for user:', user.id);
-        const result = await fetch(`http://localhost:5000/api/v1/bookings/user/${user.id}`);
+        const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/bookings/user/${user.id}`);
         const data = await result.json();
         
         console.log('Bookings fetch result:', data);

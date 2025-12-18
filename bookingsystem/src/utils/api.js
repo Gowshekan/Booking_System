@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api/v1';
 
 export const api = {
   // Auth endpoints
@@ -55,7 +55,8 @@ export const api = {
   // Test connection
   testConnection: async () => {
     try {
-      const response = await fetch('http://localhost:5000/');
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${backendUrl}/`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }

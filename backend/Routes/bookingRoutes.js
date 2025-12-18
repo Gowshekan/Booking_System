@@ -1,19 +1,42 @@
-const express = require("express");
-const bookingRouter = express.Router();
-const bookingController = require("../Controllers/bookingController");
+const express = require('express');
+const router = express.Router();
+const Booking = require('../models/bookingModel');
 
-bookingRouter.route("/")
-    .get(bookingController.getAllBookings)
-    .post(bookingController.createBooking);
+// Get all bookings
+router.get('/', async (req, res) => {
+    try {
+        const bookings = await Booking.find({});
+        res.status(200).json({
+            status: 'success',
+            results: bookings.length,
+            data: {
+                bookings
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        });
+    }
+});
 
-bookingRouter.route("/:id")
-    .get(bookingController.getBooking)
-    .patch(bookingController.updateBooking);
+// Create new booking
+router.post('/', async (req, res) => {
+    try {
+        const newBooking = await Booking.create(req.body);
+        res.status(201).json({
+            status: 'success',
+            data: {
+                booking: newBooking
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'fail',
+            message: err
+        });
+    }
+});
 
-bookingRouter.route("/user/:userId")
-    .get(bookingController.getUserBookings);
-
-bookingRouter.route("/provider/:providerId")
-    .get(bookingController.getProviderBookings);
-
-module.exports = bookingRouter;
+module.exports = router;

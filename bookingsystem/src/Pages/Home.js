@@ -23,7 +23,7 @@ const Home = () => {
 
   const fetchFeaturedServices = async () => {
     try {
-      const result = await fetch('http://localhost:5000/api/v1/services');
+      const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/services`);
       const data = await result.json();
       
       if (data.status === 'success') {

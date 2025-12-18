@@ -26,7 +26,7 @@ const Booking = () => {
         const fetchService = async () => {
             try {
                 console.log('Fetching service with ID:', bookingId);
-                const result = await fetch(`http://localhost:5000/api/v1/services/${bookingId}`);
+                const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/services/${bookingId}`);
                 const data = await result.json();
                 
                 console.log('Service fetch result:', data);
@@ -46,7 +46,7 @@ const Booking = () => {
         const fetchBooking = async () => {
             try {
                 console.log('Fetching booking with ID:', bookingId);
-                const result = await fetch(`http://localhost:5000/api/v1/bookings/${bookingId}`);
+                const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/bookings/${bookingId}`);
                 const data = await result.json();
                 
                 if (data.status === 'success') {
@@ -85,7 +85,7 @@ const Booking = () => {
             
             console.log('Submitting booking:', bookingData);
             
-            const result = await fetch('http://localhost:5000/api/v1/bookings', {
+            const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

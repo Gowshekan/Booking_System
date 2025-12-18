@@ -38,7 +38,7 @@ const Services = () => {
 
   const fetchService = async () => {
     try {
-      const result = await fetch(`http://localhost:5000/api/v1/services/${id}`);
+      const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/services/${id}`);
       const data = await result.json();
       
       if (data.status === 'success') {
@@ -75,7 +75,7 @@ const Services = () => {
 
   const fetchServices = async () => {
     try {
-      const result = await fetch('http://localhost:5000/api/v1/services');
+      const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/services`);
       const data = await result.json();
       
       if (data.status === 'success') {

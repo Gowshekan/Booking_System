@@ -27,7 +27,7 @@ const ProviderDashboard = () => {
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       if (user && user.id) {
         console.log('Fetching provider bookings for user:', user.id);
-        const result = await fetch(`http://localhost:5000/api/v1/bookings/provider/${user.id}`);
+        const result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/bookings/provider/${user.id}`);
         const data = await result.json();
         
         console.log('Provider bookings fetch result:', data);
