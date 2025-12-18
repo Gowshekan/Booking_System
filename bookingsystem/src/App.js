@@ -12,39 +12,45 @@ import Header from './components/Header';
 import Home from './Pages/Home';
 import Auth from './Pages/Auth';
 import About from './Pages/About';
-import ServiceDetails from './Pages/ServiceDetails';
+import Services from './Pages/Services';
 import Booking from './Pages/Booking';
-import CustomerDashboard from './Pages/CustomerDashboard';
+import MyBooking from './Pages/MyBooking';
 import ProviderRegistration from './Pages/ProviderRegistration';
-
-// Import Context
-import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <Header />
-          <main>
+    <Router>
+      <div className="App">
+        <Header />
+        <main>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/about" element={<About />} />
-              <Route path="/services" element={<ServiceDetails />} />
-              <Route path="/service-details" element={<ServiceDetails />} />
-              <Route path="/services/:id" element={<ServiceDetails />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/service-details" element={<Services />} />
+              <Route path="/services/:id" element={<Services />} />
               <Route path="/booking/:id" element={<Booking />} />
-              <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+              <Route path="/customer-dashboard" element={<MyBooking />} />
               <Route path="/provider-registration" element={<ProviderRegistration />} />
               <Route path="*" element={<div><h1>404 - Page Not Found</h1></div>} />
             </Routes>
           </main>
-          <ToastContainer position="top-right" autoClose={3000} />
+          <ToastContainer 
+            position="top-center" 
+            autoClose={2000} 
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+            theme="light"
+          />
         </div>
-      </Router>
-    </AuthProvider>
+    </Router>
   );
 }
 

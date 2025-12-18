@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import '../Styles/Auth.css';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,11 +16,7 @@ const Auth = () => {
     address: ''
   });
 
-  const { login, register } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,12 +24,16 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const result = await login(formData.email, formData.password);
-        if (result.success) {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const user = users.find(u => u.email === formData.email && u.password === formData.password);
+        
+        if (user) {
+          const { password, ...userWithoutPassword } = user;
+          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
           toast.success('Login successful!');
-          navigate(from, { replace: true });
+          navigate('/');
         } else {
-          toast.error(result.message);
+          toast.error('Invalid email or password');
         }
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -42,15 +42,33 @@ const Auth = () => {
           return;
         }
 
-        const { confirmPassword, ...registerData } = formData;
-        const result = await register(registerData);
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
         
-        if (result.success) {
-          toast.success('Registration successful!');
-          navigate(from, { replace: true });
-        } else {
-          toast.error(result.message);
+        if (users.find(u => u.email === formData.email)) {
+          toast.error('Email already exists');
+          setLoading(false);
+          return;
         }
+        
+        const newUser = {
+          id: Date.now().toString(),
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+          phone: formData.phone,
+          address: formData.address,
+          createdAt: new Date().toISOString()
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        const { password, ...userWithoutPassword } = newUser;
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+        
+        toast.success('Registration successful!');
+        navigate('/');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');

@@ -6,7 +6,7 @@
 .brand-intro {
   text-align: center;
   padding: 4rem 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #6366f1;
   color: white;
   margin-bottom: 4rem;
 }
@@ -51,42 +51,58 @@
   text-align: justify;
 }
 
-.why-choose-us {
+.contact-us {
   background: #f9fafb;
   padding: 4rem 0;
   border-radius: 12px;
 }
 
-.why-choose-us h2 {
+.contact-us h2 {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 3rem;
+  color: #333;
 }
 
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+.contact-details {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 3rem;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.feature-item {
+.contact-item {
   text-align: center;
   padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.feature-icon {
+.contact-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
 
-.feature-item h3 {
+.contact-item h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
 }
 
-.feature-item p {
+.contact-item p {
   color: #666;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
@@ -99,7 +115,9 @@
     padding: 2rem;
   }
   
-  .features-grid {
-    grid-template-columns: 1fr;
+  .contact-details {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
   }
 }

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import '../Styles/Services.css';
 
-const ServiceDetails = () => {
+const Services = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
@@ -19,7 +18,6 @@ const ServiceDetails = () => {
     sortBy: 'rating'
   });
 
-  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const categories = ['Plumbing', 'Electrical', 'Carpentry', 'Painting', 'Cleaning', 'Repair'];
@@ -31,151 +29,69 @@ const ServiceDetails = () => {
   ];
 
   useEffect(() => {
-    console.log('ServiceDetails useEffect - id:', id, 'filters:', filters);
     if (id) {
       fetchService();
     } else {
       fetchServices();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, filters]);
 
   const fetchService = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/services/${id}`);
-      setService(response.data.service);
-    } catch (error) {
-      // Use mock data for single service
-      const mockService = {
-        _id: id,
-        title: 'Professional Plumbing Service',
-        description: 'Expert plumbing repairs and installations for residential and commercial properties. We handle everything from leaky faucets to complete pipe replacements.',
-        category: 'Plumbing',
-        price: 75,
-        duration: 60,
-        rating: 4.8,
-        reviewCount: 127,
+    const allServices = JSON.parse(localStorage.getItem('services') || '[]');
+    const foundService = allServices.find(s => s.id === id);
+    
+    if (foundService) {
+      // Format service for display
+      const formattedService = {
+        ...foundService,
+        _id: foundService.id,
         provider: {
-          name: 'John Smith',
-          _id: 'p1',
-          bio: 'Licensed plumber with 15+ years of experience',
+          name: foundService.providerName,
+          _id: foundService.providerId,
+          phone: foundService.providerPhone,
+          bio: `Professional service provider in ${foundService.serviceArea}`,
+          location: foundService.serviceArea,
           rating: 4.8,
-          location: 'Downtown Area',
-          completedJobs: 250
+          completedJobs: Math.floor(Math.random() * 100) + 50
         },
         features: [
           'Professional service',
-          'Quality guarantee',
+          'Quality guarantee', 
           'Insured work',
           'Clean-up included',
-          'Emergency availability',
-          'Licensed and bonded'
+          'Licensed professional',
+          'Customer satisfaction guaranteed'
         ]
       };
-      setService(mockService);
-    } finally {
-      setLoading(false);
+      setService(formattedService);
+    } else {
+      setService(null);
     }
+    setLoading(false);
   };
 
   const fetchServices = async () => {
-    console.log('fetchServices called');
-    try {
-      const params = new URLSearchParams();
-      if (filters.category) params.append('category', filters.category);
-      if (filters.priceRange) params.append('priceRange', filters.priceRange);
-      if (filters.rating) params.append('minRating', filters.rating);
-      params.append('sortBy', filters.sortBy);
-
-      const response = await axios.get(`http://localhost:5000/api/services?${params}`);
-      setServices(response.data.services || []);
-    } catch (error) {
-      console.log('API failed, using mock data');
-      // Use mock data when API is not available
-      const mockServices = [
-        {
-          _id: '1',
-          title: 'Professional Plumbing Service',
-          description: 'Expert plumbing repairs and installations',
-          category: 'Plumbing',
-          price: 75,
-          duration: 60,
-          rating: 4.8,
-          provider: { name: 'John Smith', _id: 'p1' }
-        },
-        {
-          _id: '2',
-          title: 'Electrical Wiring & Repairs',
-          description: 'Licensed electrical work for homes and offices',
-          category: 'Electrical',
-          price: 90,
-          duration: 90,
-          rating: 4.9,
-          provider: { name: 'Mike Johnson', _id: 'p2' }
-        },
-        {
-          _id: '3',
-          title: 'Custom Carpentry Work',
-          description: 'Handcrafted furniture and home improvements',
-          category: 'Carpentry',
-          price: 65,
-          duration: 120,
-          rating: 4.7,
-          provider: { name: 'Sarah Wilson', _id: 'p3' }
-        },
-        {
-          _id: '4',
-          title: 'Interior & Exterior Painting',
-          description: 'Professional painting services with quality materials',
-          category: 'Painting',
-          price: 55,
-          duration: 180,
-          rating: 4.6,
-          provider: { name: 'David Brown', _id: 'p4' }
-        },
-        {
-          _id: '5',
-          title: 'Deep Cleaning Service',
-          description: 'Thorough cleaning for homes and offices',
-          category: 'Cleaning',
-          price: 45,
-          duration: 120,
-          rating: 4.8,
-          provider: { name: 'Lisa Davis', _id: 'p5' }
-        },
-        {
-          _id: '6',
-          title: 'General Home Repairs',
-          description: 'Fix various household issues and maintenance',
-          category: 'Repair',
-          price: 60,
-          duration: 90,
-          rating: 4.5,
-          provider: { name: 'Tom Anderson', _id: 'p6' }
-        }
-      ];
-      
-      let filteredServices = mockServices;
-      
-      if (filters.category) {
-        filteredServices = filteredServices.filter(s => s.category === filters.category);
-      }
-      
-      setServices(filteredServices);
-      console.log('Services set:', filteredServices.length, 'services');
-    } finally {
-      setLoading(false);
+    const allServices = JSON.parse(localStorage.getItem('services') || '[]');
+    let filteredServices = allServices;
+    
+    if (filters.category) {
+      filteredServices = filteredServices.filter(s => s.category === filters.category);
     }
+    
+    setServices(filteredServices);
+    setLoading(false);
   };
 
   const handleBookService = () => {
-    if (!isAuthenticated) {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!user) {
       toast.error('Please login to book a service');
-      navigate('/auth', { state: { from: { pathname: `/services/${service._id}` } } });
+      navigate('/auth');
       return;
     }
 
-    if (user?.role !== 'customer') {
+    if (user.role !== 'customer') {
       toast.error('Only customers can book services');
       return;
     }
@@ -265,7 +181,6 @@ const ServiceDetails = () => {
             </div>
           </div>
 
-          {/* Provider Info */}
           <div className="provider-section">
             <h3>About the Provider</h3>
             <div className="provider-card">
@@ -291,11 +206,10 @@ const ServiceDetails = () => {
       <div className="container">
         <div className="services-header">
           <h1>{category ? `${category} Services` : 'All Services'}</h1>
-          <p>Find the perfect service provider for your needs</p>
+          <p>Connect with backend to view available services</p>
         </div>
 
         <div className="services-content">
-          {/* Filters Sidebar */}
           <div className="filters-sidebar">
             <h3>Filters</h3>
             
@@ -350,58 +264,17 @@ const ServiceDetails = () => {
             </div>
           </div>
 
-          {/* Services Grid */}
           <div className="services-main">
-            {services.length === 0 ? (
-              <div className="no-services">
-                <h3>No services found</h3>
-                <p>Try adjusting your filters or browse other categories</p>
-                <button 
-                  className="btn-primary"
-                  onClick={() => navigate('/')}
-                >
-                  Browse All Categories
-                </button>
-              </div>
-            ) : (
-              <div className="services-grid">
-                {services.map((service) => (
-                  <div key={service._id} className="service-card">
-                    <div className="service-image">
-                      <img src="/api/placeholder/300/200" alt={service.title} />
-                    </div>
-                    
-                    <div className="service-content">
-                      <h3>{service.title}</h3>
-                      <p className="service-description">{service.description}</p>
-                      
-                      <div className="service-meta">
-                        <span className="category">{service.category}</span>
-                        <span className="rating">⭐ {service.rating || 4.5}</span>
-                      </div>
-                      
-                      <div className="service-provider">
-                        <span>By {service.provider?.name}</span>
-                      </div>
-                      
-                      <div className="service-footer">
-                        <div className="price">
-                          <span className="price-from">From</span>
-                          <span className="price-amount">${service.price}</span>
-                        </div>
-                        
-                        <button 
-                          className="btn-primary"
-                          onClick={() => navigate(`/services/${service._id}`)}
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="no-services">
+              <h3>No services available</h3>
+              <p>Connect to backend API to load services</p>
+              <button 
+                className="btn-primary"
+                onClick={() => navigate('/')}
+              >
+                Go to Home
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -409,4 +282,4 @@ const ServiceDetails = () => {
   );
 };
 
-export default ServiceDetails;
+export default Services;

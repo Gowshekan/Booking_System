@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import '../Styles/ProviderRegistration.css';
 
 const ProviderRegistration = () => {
   const [loading, setLoading] = useState(false);
@@ -64,17 +65,70 @@ const ProviderRegistration = () => {
     setLoading(true);
 
     try {
-      const registrationData = {
-        ...formData,
-        role: 'provider'
+      // Save provider to users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (users.find(u => u.email === formData.email)) {
+        toast.error('Email already exists');
+        setLoading(false);
+        return;
+      }
+      
+      const newProvider = {
+        id: Date.now().toString(),
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: 'provider',
+        phone: formData.phone,
+        address: formData.address,
+        businessName: formData.businessName,
+        businessDescription: formData.businessDescription,
+        serviceCategories: formData.serviceCategories,
+        experience: formData.experience,
+        certifications: formData.certifications,
+        workingHours: formData.workingHours,
+        serviceArea: formData.serviceArea,
+        priceRange: formData.priceRange,
+        createdAt: new Date().toISOString()
       };
-      delete registrationData.confirmPassword;
-
-      await axios.post('http://localhost:5000/api/auth/register', registrationData);
-      toast.success('Registration successful! Please login to continue.');
-      navigate('/auth');
+      
+      users.push(newProvider);
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      // Create services for each category
+      const services = JSON.parse(localStorage.getItem('services') || '[]');
+      const basePrice = formData.priceRange.includes('25-50') ? 35 : 
+                       formData.priceRange.includes('50-75') ? 60 :
+                       formData.priceRange.includes('75-100') ? 85 :
+                       formData.priceRange.includes('100-150') ? 125 : 75;
+      
+      formData.serviceCategories.forEach(category => {
+        const newService = {
+          id: `${Date.now()}-${category}`,
+          title: `Professional ${category} Service`,
+          description: formData.businessDescription || `Expert ${category.toLowerCase()} services by ${formData.name}`,
+          category: category,
+          price: basePrice,
+          duration: 90,
+          rating: 5.0,
+          reviewCount: 0,
+          providerId: newProvider.id,
+          providerName: formData.name,
+          providerPhone: formData.phone,
+          serviceArea: formData.serviceArea,
+          workingHours: formData.workingHours,
+          createdAt: new Date().toISOString()
+        };
+        services.push(newService);
+      });
+      
+      localStorage.setItem('services', JSON.stringify(services));
+      
+      toast.success('Registration successful! You are now a verified provider and your services are live!');
+      navigate('/services');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      toast.error('Registration failed');
     } finally {
       setLoading(false);
     }
@@ -305,8 +359,8 @@ const ProviderRegistration = () => {
 
               <div className="registration-note">
                 <p>
-                  <strong>Note:</strong> After registration, our team will review your application. 
-                  You'll receive an email confirmation once approved to start offering services.
+                  <strong>Note:</strong> After registration, you will immediately become a verified provider 
+                  and your services will be live on our platform for customers to book!
                 </p>
               </div>
 

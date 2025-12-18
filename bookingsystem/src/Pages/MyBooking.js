@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import '../Styles/MyBooking.css';
 
-const CustomerDashboard = () => {
+const MyBooking = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
     fetchBookings();
-  }, []);
+  }, [navigate]);
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/bookings');
-      setBookings(response.data.bookings || []);
+      // For now, use empty array - ready for backend integration
+      setBookings([]);
     } catch (error) {
       toast.error('Error fetching bookings');
     } finally {
@@ -40,11 +43,13 @@ const CustomerDashboard = () => {
     return <div className="loading-container"><div className="spinner"></div></div>;
   }
 
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
   return (
     <div className="dashboard">
       <div className="container">
         <div className="dashboard-header">
-          <h1>Customer Dashboard</h1>
+          <h1>My Bookings</h1>
           <p>Welcome back, {user?.name}!</p>
         </div>
         
@@ -92,4 +97,4 @@ const CustomerDashboard = () => {
   );
 };
 
-export default CustomerDashboard;
+export default MyBooking;

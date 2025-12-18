@@ -37,29 +37,24 @@ const About = () => {
           </div>
         </section>
 
-        {/* Why Choose Us */}
-        <section className="why-choose-us">
-          <h2>Why Choose Our Platform</h2>
-          <div className="features-grid">
-            <div className="feature-item">
-              <div className="feature-icon">✅</div>
-              <h3>Verified Professionals</h3>
-              <p>All service providers are background-checked and verified</p>
+        {/* Contact Us */}
+        <section className="contact-us">
+          <h2>Contact Us</h2>
+          <div className="contact-details">
+            <div className="contact-item">
+              <div className="contact-icon">👤</div>
+              <h3>Name</h3>
+              <p>RVGR</p>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">🛡️</div>
-              <h3>Insured Services</h3>
-              <p>Every booking is protected with comprehensive insurance</p>
+            <div className="contact-item">
+              <div className="contact-icon">📱</div>
+              <h3>Mobile Number</h3>
+              <p>9363702220</p>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">⭐</div>
-              <h3>Quality Guarantee</h3>
-              <p>100% satisfaction guarantee on all completed services</p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">📱</div>
-              <h3>Easy Booking</h3>
-              <p>Simple online booking with instant confirmation</p>
+            <div className="contact-item">
+              <div className="contact-icon">📍</div>
+              <h3>Address</h3>
+              <p>Line Medu Police Quatres<br />Salem City<br />Salem - 636006</p>
             </div>
           </div>
         </section>

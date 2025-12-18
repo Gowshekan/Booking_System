@@ -123,7 +123,7 @@ body {
 
 /* Home Page */
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #6366f1;
   color: white;
   padding: 4rem 0;
   display: flex;
@@ -212,7 +212,7 @@ body {
 }
 
 .cta-section {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: #6366f1;
   color: white;
   text-align: center;
 }
@@ -465,6 +465,25 @@ body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Navigation Logout Button - Same as Login */
+.nav-links button.btn-primary {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.nav-links button.btn-primary:hover {
+  background: #5856eb;
 }
 
 /* Responsive */

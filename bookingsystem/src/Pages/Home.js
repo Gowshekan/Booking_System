@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../Styles/Home.css';
 
 const Home = () => {
   const [services, setServices] = useState([]);
@@ -21,63 +22,28 @@ const Home = () => {
   }, []);
 
   const fetchFeaturedServices = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/services?limit=6');
-      setServices(response.data.services || []);
-    } catch (error) {
-      // Use mock data for home page
-      const mockServices = [
-        {
-          _id: '1',
-          title: 'Professional Plumbing',
-          description: 'Expert plumbing repairs and installations',
-          price: 75,
-          duration: 60,
-          rating: 4.8
-        },
-        {
-          _id: '2',
-          title: 'Electrical Services',
-          description: 'Licensed electrical work for homes',
-          price: 90,
-          duration: 90,
-          rating: 4.9
-        },
-        {
-          _id: '3',
-          title: 'Custom Carpentry',
-          description: 'Handcrafted furniture and improvements',
-          price: 65,
-          duration: 120,
-          rating: 4.7
-        }
-      ];
-      setServices(mockServices);
-    } finally {
-      setLoading(false);
-    }
+    setServices([]);
+    setLoading(false);
   };
 
   return (
     <div className="home">
-      {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
           <h1>Professional Home Services at Your Doorstep</h1>
           <p>Connect with verified professionals for reliable, high-quality home services. Your satisfaction is our guarantee.</p>
           <button 
-            className="btn-primary btn-large"
+            className="btn-primary btn-large btn-hero"
             onClick={() => navigate('/services')}
           >
             Book a Service Now
           </button>
         </div>
         <div className="hero-image">
-          <img src="HomeServices.jpg" alt="Home Services" />
+          <img src="onlinebooking.jpg" alt="Home Services" />
         </div>
       </section>
 
-      {/* Service Categories */}
       <section className="categories-section">
         <div className="container">
           <h2>Our Service Categories</h2>

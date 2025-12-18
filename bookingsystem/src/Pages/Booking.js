@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import '../Styles/Booking.css';
 
 const Booking = () => {
     const { bookingId } = useParams();
@@ -14,11 +13,11 @@ const Booking = () => {
         address: '',
         notes: ''
     });
-    const { user } = useAuth();
     const navigate = useNavigate();
     const isNewBooking = !isNaN(bookingId);
 
     useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
         if (!user) {
             navigate('/auth');
             return;
@@ -26,8 +25,8 @@ const Booking = () => {
         
         const fetchService = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/services/${bookingId}`);
-                setService(response.data);
+                // For now, set null - ready for backend integration
+                setService(null);
             } catch (error) {
                 toast.error('Service not found');
                 navigate('/services');
@@ -36,8 +35,8 @@ const Booking = () => {
 
         const fetchBooking = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/bookings/${bookingId}`);
-                setBooking(response.data);
+                // For now, set null - ready for backend integration
+                setBooking(null);
             } catch (error) {
                 toast.error('Booking not found');
                 navigate('/customer-dashboard');
@@ -49,19 +48,16 @@ const Booking = () => {
         } else {
             fetchBooking();
         }
-    }, [bookingId, user, isNewBooking, navigate]);
+    }, [bookingId, isNewBooking, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/bookings', {
-                serviceId: bookingId,
-                ...formData
-            });
+            // For now, just show success - ready for backend integration
             toast.success('Booking created successfully!');
             navigate('/customer-dashboard');
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Booking failed');
+            toast.error('Booking failed');
         }
     };
 
@@ -153,9 +149,14 @@ const Booking = () => {
     }
 
     return (
-        <div className="loading-container">
-            <div className="spinner"></div>
-            <p>Loading...</p>
+        <div className="booking-form">
+            <h1>Service Booking</h1>
+            <div className="empty-state">
+                <p>Connect to backend to load service details</p>
+                <button className="btn-primary" onClick={() => navigate('/services')}>
+                    Browse Services
+                </button>
+            </div>
         </div>
     );
 };
