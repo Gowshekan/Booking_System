@@ -48,13 +48,12 @@
 }
 
 .btn-hero {
-  background: #007bff !important;
+  background: #007bff;
 }
 
 .btn-hero:hover {
-  background: #0056b3 !important;
+  background: #0056b3;
 }
-
 
 
 .categories-section, .featured-services, .cta-section, .stats-section {
