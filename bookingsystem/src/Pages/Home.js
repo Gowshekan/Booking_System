@@ -73,7 +73,7 @@ const Home = () => {
           </button>
         </div>
         <div className="hero-image">
-          <img src="/api/placeholder/600/400" alt="Home Services" />
+          <img src="HomeServices.jpg" alt="Home Services" />
         </div>
       </section>
 

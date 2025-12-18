@@ -11,6 +11,7 @@ import Header from './components/Header';
 // Import Pages
 import Home from './Pages/Home';
 import Auth from './Pages/Auth';
+import About from './Pages/About';
 import ServiceDetails from './Pages/ServiceDetails';
 import Booking from './Pages/Booking';
 import CustomerDashboard from './Pages/CustomerDashboard';
@@ -30,6 +31,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/about" element={<About />} />
               <Route path="/services" element={<ServiceDetails />} />
               <Route path="/service-details" element={<ServiceDetails />} />
               <Route path="/services/:id" element={<ServiceDetails />} />

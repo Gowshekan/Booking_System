@@ -1,0 +1,105 @@
+/* About Page Styles */
+.about-page {
+  padding: 2rem 0;
+}
+
+.brand-intro {
+  text-align: center;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 4rem;
+}
+
+.brand-intro h1 {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+}
+
+.brand-description {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.about-content {
+  margin: 4rem 0;
+}
+
+.about-text {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.about-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 2rem;
+  text-align: justify;
+}
+
+.why-choose-us {
+  background: #f9fafb;
+  padding: 4rem 0;
+  border-radius: 12px;
+}
+
+.why-choose-us h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.feature-item {
+  text-align: center;
+  padding: 2rem;
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-item h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.feature-item p {
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .brand-intro h1 {
+    font-size: 2rem;
+  }
+  
+  .about-text {
+    margin: 1rem;
+    padding: 2rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
