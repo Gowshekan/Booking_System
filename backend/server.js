@@ -5,8 +5,9 @@ const cors = require("cors");
 
 dotenv.config({path: "./config.env"});
 app.use(cors({
-    origin: ["https://booking-system.vercel.app", "http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: ["https://booking-system.vercel.app", "https://booking-system-phi.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
 

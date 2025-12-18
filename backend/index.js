@@ -5,9 +5,7 @@ const bookingRoutes = require("./Routes/bookingRoutes");
 const providerRoutes = require("./Routes/providerRoutes");
 
 const app = express();
-const cors = require("cors");
 
-app.use(cors());
 app.use(express.json());
 
 // Routes
